@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AutobotsService } from './autobots.service';
 import { CreateAutobotDto } from './dto/create-autobot.dto';
@@ -16,7 +18,7 @@ export class AutobotsController {
   constructor(private readonly autobotsService: AutobotsService) {}
 
   @Post()
-  create(@Body() createAutobotDto: CreateAutobotDto) {
+  create(@Body(new ValidationPipe()) createAutobotDto: CreateAutobotDto) {
     return this.autobotsService.create(createAutobotDto);
   }
 
@@ -26,17 +28,20 @@ export class AutobotsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.autobotsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.autobotsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAutobotDto: UpdateAutobotDto) {
-    return this.autobotsService.update(+id, updateAutobotDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ValidationPipe()) updateAutobotDto: UpdateAutobotDto,
+  ) {
+    return this.autobotsService.update(id, updateAutobotDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.autobotsService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.autobotsService.remove(id);
   }
 }
